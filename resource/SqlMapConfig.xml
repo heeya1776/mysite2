@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN " "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+
+	<!-- settings -->
+	<settings useStatementNamespaces="true" />
+
+ 	<!-- sql mapping fiels -->
+	
+	<sqlMap resource="user.xml"/>
+	<sqlMap resource="guestbook.xml"/>
+	<sqlMap resource="board.xml"/>
+	
+
+	
+</sqlMapConfig>

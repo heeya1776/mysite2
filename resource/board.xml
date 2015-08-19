@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="board">
+	<typeAlias alias="BoardVo" type="com.bit2015.mysite2.vo.BoardVo" />
+	
+	<resultMap class="BoardVo" id="resultMapList">
+		<result column="no" property="no"/>
+		<result column="name" property="name"/>
+		<result column="title" property="title"/>
+		<result column="reg_date" property="regDate"/>
+		<result column="member_no" property="memberNo"/>
+		<result column="read_no" property="readNo"/>	
+	</resultMap>
+	
+	<resultMap class="BoardVo" id="resultMapList2">
+		<result column="no" property="no"/>
+		<result column="name" property="name"/>
+		<result column="title" property="title"/>
+		<result column="reg_date" property="regDate"/>
+		<result column="member_no" property="memberNo"/>
+		<result column="read_no" property="readNo"/>
+		<result column="group_no" property="groupNo"/>
+		<result column="order_no" property="orderNo"/>
+		<result column="depth_no" property="depth"/>
+	</resultMap>
+	
+	<select id="getList" parameterClass="Long" resultClass="BoardVo"  resultMap="resultMapList">
+		<![CDATA[
+			SELECT *
+			  FROM (SELECT  A.*, rownum as rnum, floor((rownum-1)/5+1) as page, count(*) over() as totcnt
+					  FROM (SELECT no, name, title, TO_CHAR(reg_date, 'YYYY-MM-DD HH:MM:SS') as reg_date, member_no, read_no
+					 	   	  FROM board
+					 	  ORDER BY reg_date DESC) A )
+			 WHERE page = #page#
+		]]> 
+	</select>
+
+	<select id="getList2" parameterClass="java.lang.String" resultClass="BoardVo"  resultMap="resultMapList">
+		<![CDATA[
+			SELECT * 
+			  FROM (SELECT  A.*, rownum as rnum, floor((rownum-1)/5+1) as page, count(*) over() as totcnt
+					  FROM (SELECT no, name, title, TO_CHAR(reg_date, 'YYYY-MM-DD HH:MM:SS') as reg_date, member_no, read_no
+					 	   	  FROM board
+					 	  ORDER BY reg_date DESC) A )
+			 WHERE name like '%' || #kwd# || '%'
+			    or title like '%' || #kwd# || '%'
+		]]> 
+	</select>
+	
+	<select id="getVo" parameterClass="Long" resultClass="BoardVo" resultMap="resultMapList2">
+		<![CDATA[
+			SELECT no, name, title, content, reg_date, member_no, read_no, group_no, order_no, depth_no 
+			  from board			 
+			  WHERE no=#no#
+		]]> 
+	</select>
+	
+
+	<insert id="insert" parameterClass="BoardVo">
+		<![CDATA[
+			insert
+			  into board
+			values (board_seq.nextval, #name#, #title#, #content#, sysdate, #memberNo#, 0, (select nvl(max(group_no)+1, 0) from board), 0, 0)
+		]]> 
+	</insert>
+	
+	<insert id="insertReply" parameterClass="BoardVo">
+		<![CDATA[
+			insert
+			  into board
+			values (board_seq.nextval, #name#, #title#, #content#, sysdate, #memberNo#, 0, #groupNo#, #orderNo#+1, #depth#+1)
+		]]> 
+	</insert>
+	
+	<delete id="delete" parameterClass="Long">
+		<![CDATA[
+			delete
+			  from board
+			 where no=#no#			
+		]]> 
+	</delete>
+	
+	<update id="update" parameterClass="BoardVo">
+		<![CDATA[
+			update board
+			   set title=#title#, content=#content#, reg_date=sysdate
+			 where no=#no#
+		]]> 
+	</update>
+	
+	<update id="update2" parameterClass="Long">
+		<![CDATA[
+			update board
+			   set read_no=read_no+1
+			 where no=#no#
+		]]> 
+	</update>
+	
+	<update id="updateReply" parameterClass="BoardVo">
+		<![CDATA[
+			update board
+			   set order_no=order_no+1
+			 where groupno=#groupNo#
+			   and order_no>=#orderNo#
+		]]> 
+	</update>
+	
+</sqlMap>
