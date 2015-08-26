@@ -27,12 +27,31 @@ public class BoardController {
 	@RequestMapping("/list")
 	public String BoardList(@RequestParam(required=false, defaultValue="1") long pageNo, Model model) {
 		
-		//BoardVo vo = new BoardVo();
-		//vo = (BoardVo)model;
+		System.out.println(pageNo);
+		long totcnt = boardService.getTotal();
 		List<BoardVo> list = boardService.list(pageNo);
-			
+		long beginPageListNo = (pageNo/5*5)+1;
+		long endPageListNo = (pageNo/5*5)+5;
+		if(endPageListNo>=totcnt/5+1){
+			endPageListNo = totcnt/5+1;
+		}
+		long jumpPageListLeft = pageNo-1;
+		if(jumpPageListLeft<1){
+			jumpPageListLeft = 1;
+		}
+		long jumpPageListRight = pageNo+1;
+		if(jumpPageListRight>=totcnt/5+1){
+			jumpPageListRight = totcnt/5+1;
+		}
+		
 		model.addAttribute("list", list);
 		model.addAttribute("pageNo", pageNo);
+		model.addAttribute("pageCount", totcnt/5+1);
+		model.addAttribute("beginPageListNo", beginPageListNo);
+		model.addAttribute("endPageListNo", endPageListNo);
+		model.addAttribute("jumpPageListLeft", jumpPageListLeft);
+		model.addAttribute("jumpPageListRight", jumpPageListRight);
+		
 		return "board/list";
 		
 	}
@@ -71,15 +90,20 @@ public class BoardController {
 		}
 		
 		BoardVo replyVo = boardService.getVo(no);
+		
+		
 		System.out.println(replyVo);
 		boardVo.setGroupNo(replyVo.getGroupNo());
 		boardVo.setOrderNo(replyVo.getOrderNo());
 		boardVo.setDepth(replyVo.getDepth());
+		
 		boardVo.setName(vo.getName());
 		boardVo.setMemberNo(vo.getNo());
 		
-		boardService.insertReply(boardVo);
 		boardService.updateReply(boardVo);
+		boardService.insertReply(boardVo);
+		
+		
 	
 		return "redirect:/board/list";
 		

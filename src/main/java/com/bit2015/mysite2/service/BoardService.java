@@ -68,8 +68,14 @@ public class BoardService {
 	public void updateReply(BoardVo vo){
 		
 		vo.setOrderNo(vo.getOrderNo()+1);
-		vo.setDepth(vo.getDepth()+1);
 		boardDao.updateReply(vo);
+		
+	}
+	
+	public long getTotal(){
+		
+		long no = boardDao.getTotal();
+		return no;
 		
 	}
 	

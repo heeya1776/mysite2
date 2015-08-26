@@ -47,6 +47,4 @@
 		<property name="sqlMapClient" ref="sqlMapClient"/>
 	</bean>
 
-
-
 </beans> 

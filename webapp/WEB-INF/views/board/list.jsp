@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -12,7 +12,7 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <link href="/assets/css/board.css" rel="stylesheet" type="text/css">
 <script type="text/javascript">
-
+	
 </script>
 </head>
 <body>
@@ -24,8 +24,8 @@
 		<div id="content">
 			<div id="board">
 				<form id="search_form" action="search" method="post">
-					<input type="text" id="kwd" name="kwd" value="">
-					<input type="submit" value="찾기">
+					<input type="text" id="kwd" name="kwd" value=""> <input
+						type="submit" value="찾기">
 				</form>
 				<table class="tbl-ex">
 					<tr>
@@ -38,24 +38,26 @@
 					</tr>
 					<c:set var="count" value="${fn:length(list) }"></c:set>
 					<c:forEach var="vo" items="${list }" varStatus="status">
-					<tr>
-						<td>${count-status.index }</td>
-						<td><a href="viewform/${vo.no }">${vo.title }</a></td>
-						<td>${vo.name }</td>
-						<td>${vo.readNo }</td>
-						<td>${vo.regDate }</td>
-						<td><a href="replyform?no=${vo.no }">답글</a></td>
-						<td>
-							<c:choose>
-								<c:when test="${authUser.no == vo.memberNo }">
-									<a href="delete/${vo.no }" class="del">삭제</a>
-								</c:when>
-								<c:otherwise></c:otherwise>
-							</c:choose>
-						</td>
-					</tr>
-					</c:forEach>	
-					</table>
+						<tr>
+							<td>${count-status.index }</td>
+							<td><c:set var="space" value="　　" /> <c:forEach var="i"
+									begin="1" end="${vo.depth }">
+									<c:out value="${space }" />
+								</c:forEach> <c:if test="${vo.orderNo != 0 }">ㄴ</c:if> <a
+								href="viewform/${vo.no }">${vo.title }</a></td>
+							<td>${vo.name }</td>
+							<td>${vo.readNo }</td>
+							<td>${vo.regDate }</td>
+							<td><a href="replyform?no=${vo.no }">답글</a></td>
+							<td><c:choose>
+									<c:when test="${authUser.no == vo.memberNo }">
+										<a href="delete/${vo.no }" class="del">삭제</a>
+									</c:when>
+									<c:otherwise></c:otherwise>
+								</c:choose></td>
+						</tr>
+					</c:forEach>
+				</table>
 				<div class="bottom">
 					<c:choose>
 						<c:when test="${empty authUser }">
@@ -65,11 +67,25 @@
 						</c:otherwise>
 					</c:choose>
 				</div>
+				<div id="bottomList">
+					<table>
+						<tr>
+							<td><a href="list?pageNo=1">◀◀</a></td>
+							<td><a href="list?pageNo=${jumpPageListLeft }">◁</a></td>
+							<c:forEach var="i" begin="${beginPageListNo }"
+								end="${endPageListNo }">
+								<td><a href="list?pageNo=${i }">[${i }]</a></td>
+							</c:forEach>
+							<td><a href="list?pageNo=${jumpPageListRight }">▷</a></td>
+							<td><a href="list?pageNo=${pageCount }">▶▶</a></td>
+						</tr>
+					</table>
+				</div>
 			</div>
 		</div>
 		<div id="navigation">
 			<c:import url="/WEB-INF/views/include/navigation.jsp">
-				<c:param name="pagename" value="board"/>
+				<c:param name="pagename" value="board" />
 			</c:import>
 		</div>
 		<div id="footer">

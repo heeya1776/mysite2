@@ -10,7 +10,10 @@
 		<result column="title" property="title"/>
 		<result column="reg_date" property="regDate"/>
 		<result column="member_no" property="memberNo"/>
-		<result column="read_no" property="readNo"/>	
+		<result column="read_no" property="readNo"/>
+		<result column="group_no" property="groupNo"/>
+		<result column="order_no" property="orderNo"/>
+		<result column="depth_no" property="depth"/>	
 	</resultMap>
 	
 	<resultMap class="BoardVo" id="resultMapList2">
@@ -29,10 +32,11 @@
 		<![CDATA[
 			SELECT *
 			  FROM (SELECT  A.*, rownum as rnum, floor((rownum-1)/5+1) as page, count(*) over() as totcnt
-					  FROM (SELECT no, name, title, TO_CHAR(reg_date, 'YYYY-MM-DD HH:MM:SS') as reg_date, member_no, read_no
+					  FROM (SELECT no, name, title, TO_CHAR(reg_date, 'YYYY-MM-DD HH:MM:SS') as reg_date, member_no, read_no, group_no, order_no, depth_no
 					 	   	  FROM board
 					 	  ORDER BY reg_date DESC) A )
 			 WHERE page = #page#
+		  order by group_no DESC, order_no ASC
 		]]> 
 	</select>
 
@@ -40,11 +44,12 @@
 		<![CDATA[
 			SELECT * 
 			  FROM (SELECT  A.*, rownum as rnum, floor((rownum-1)/5+1) as page, count(*) over() as totcnt
-					  FROM (SELECT no, name, title, TO_CHAR(reg_date, 'YYYY-MM-DD HH:MM:SS') as reg_date, member_no, read_no
+					  FROM (SELECT no, name, title, TO_CHAR(reg_date, 'YYYY-MM-DD HH:MM:SS') as reg_date, member_no, read_no, group_no, order_no, depth_no
 					 	   	  FROM board
 					 	  ORDER BY reg_date DESC) A )
 			 WHERE name like '%' || #kwd# || '%'
 			    or title like '%' || #kwd# || '%'
+		  order by group_no DESC, order_no ASC
 		]]> 
 	</select>
 	
@@ -56,6 +61,12 @@
 		]]> 
 	</select>
 	
+	<select id="getTotal" parameterClass="Long" resultClass="long">
+		<![CDATA[
+			SELECT count(*)
+			  from board			 
+		]]> 
+	</select>
 
 	<insert id="insert" parameterClass="BoardVo">
 		<![CDATA[
@@ -69,7 +80,7 @@
 		<![CDATA[
 			insert
 			  into board
-			values (board_seq.nextval, #name#, #title#, #content#, sysdate, #memberNo#, 0, #groupNo#, #orderNo#+1, #depth#+1)
+			values (board_seq.nextval, #name#, #title#, #content#, sysdate, #memberNo#, 0, #groupNo#, #orderNo#, #depth#+1)
 		]]> 
 	</insert>
 	
@@ -101,7 +112,7 @@
 		<![CDATA[
 			update board
 			   set order_no=order_no+1
-			 where groupno=#groupNo#
+			 where group_no=#groupNo#
 			   and order_no>=#orderNo#
 		]]> 
 	</update>

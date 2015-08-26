@@ -71,4 +71,11 @@ public class BoardDao {
 		sqlMapClientTemplate.update("board.updateReply", vo);
 		
 	}
+	
+	public long getTotal(){
+		
+		long no = (long)sqlMapClientTemplate.queryForObject("board.getTotal");
+		return no;
+		
+	}
 }

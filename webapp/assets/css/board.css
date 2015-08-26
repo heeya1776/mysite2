@@ -130,3 +130,7 @@ a.del	{
 	background:url("/assets/images/recycle.png") no-repeat 0 0;
 	font-size:0;
 }
+
+div#bottomList table {
+	padding-left:300;
+}
